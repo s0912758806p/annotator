@@ -16,9 +16,12 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
     setTimeout(() => {
       if (values.username === 'admin' && values.password === '123456') {
         message.success('登錄成功！');
+
+        localStorage.setItem('isLoggedIn', 'true');
         onLoginSuccess();
       } else {
         message.error('賬號或密碼錯誤！');
+        localStorage.setItem('isLoggedIn', 'false');
       }
       setLoading(false);
     }, 500);

@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConfigProvider } from 'antd';
 import zhTW from 'antd/locale/zh_TW';
 import Login from './Login';
 import Annotator from './Annotator';
 import './App.css';
 
+const STORAGE_KEY = 'isLoggedIn';
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    return savedState === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, String(isLoggedIn));
+  }, [isLoggedIn]);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -14,6 +23,7 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   return (

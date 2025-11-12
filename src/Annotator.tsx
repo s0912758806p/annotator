@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, Button, message, Card, Space } from 'antd';
-import { UploadOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UploadOutlined, LogoutOutlined, ExportOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import ImageAnnotation from './ImageAnnotation';
 import './Annotator.css';
@@ -80,6 +80,17 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
     message.success('圖片已刪除');
   };
 
+  const handleExport = () => {
+    console.log('匯出');
+  };
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn !== 'true') {
+      onLogout();
+    }
+  }, [onLogout]);
+
   return (
     <div className="annotator-container">
       <div className="annotator-header">
@@ -95,19 +106,25 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
 
       <Card className="upload-card">
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <Upload
-            fileList={fileList}
-            onChange={handleUpload}
-            beforeUpload={beforeUpload}
-            onRemove={handleRemove}
-            multiple
-            maxCount={2}
-            showUploadList={false}
-          >
-            <Button icon={<UploadOutlined />}>
-              上傳圖片 (最多2張)
+          <div className="upload-and-export-container">
+            <Upload
+              fileList={fileList}
+              onChange={handleUpload}
+              beforeUpload={beforeUpload}
+              onRemove={handleRemove}
+              multiple
+              maxCount={2}
+              showUploadList={false}
+            >
+              <Button icon={<UploadOutlined />}>
+                上傳圖片 (最多2張)
+              </Button>
+            </Upload>
+
+            <Button type="primary" disabled={images.length === 0} icon={<ExportOutlined />} onClick={handleExport}>
+              匯出
             </Button>
-          </Upload>
+          </div>
 
           {images.length > 0 && (
             <div className="images-container">
