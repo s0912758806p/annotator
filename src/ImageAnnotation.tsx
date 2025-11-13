@@ -41,6 +41,22 @@ const ImageAnnotation = forwardRef<ImageAnnotationRef, ImageAnnotationProps>(
     }),
   }));
 
+  const createCirclePoints = (width: number, height: number, numPoints: number = 16): Point[] => {
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.35;
+    
+    const points: Point[] = [];
+    for (let i = 0; i < numPoints; i++) {
+      const angle = (i / numPoints) * 2 * Math.PI;
+      points.push({
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+      });
+    }
+    return points;
+  };
+
   useEffect(() => {
     const img = new window.Image();
     img.src = imageUrl;
@@ -54,43 +70,21 @@ const ImageAnnotation = forwardRef<ImageAnnotationRef, ImageAnnotationProps>(
       
       setDimensions({ width, height });
       
-      const margin = 0.15;
-      const rectWidth = width * (1 - 2 * margin);
-      const rectHeight = height * (1 - 2 * margin);
-      const startX = width * margin;
-      const startY = height * margin;
-      
-      const defaultPoints: Point[] = [
-        { x: startX, y: startY },
-        { x: startX + rectWidth, y: startY },
-        { x: startX + rectWidth, y: startY + rectHeight },
-        { x: startX, y: startY + rectHeight },
-      ];
+      const defaultPoints = createCirclePoints(width, height);
       
       setPoints(defaultPoints);
-      message.success('已自動創建預設標註框，可拖動節點調整或點擊邊線添加新節點');
+      message.success('已自動創建預設圓形標註，可拖動節點調整或點擊邊線添加新節點');
     };
   }, [imageUrl]);
 
   const handleResetAnnotation = () => {
     if (dimensions.width === 0 || dimensions.height === 0) return;
     
-    const margin = 0.15;
-    const rectWidth = dimensions.width * (1 - 2 * margin);
-    const rectHeight = dimensions.height * (1 - 2 * margin);
-    const startX = dimensions.width * margin;
-    const startY = dimensions.height * margin;
-    
-    const defaultPoints: Point[] = [
-      { x: startX, y: startY },
-      { x: startX + rectWidth, y: startY },
-      { x: startX + rectWidth, y: startY + rectHeight },
-      { x: startX, y: startY + rectHeight },
-    ];
+    const defaultPoints = createCirclePoints(dimensions.width, dimensions.height);
     
     setPoints(defaultPoints);
     setSelectedPointIndex(null);
-    message.info('已重置為預設矩形標註');
+    message.info('已重置為預設圓形標註');
   };
 
   const handleSaveAnnotation = () => {

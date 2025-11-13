@@ -11,14 +11,14 @@ A modern, interactive image annotation tool built with React, TypeScript, and Ko
 ## ✨ Features
 
 - 🔐 **Simple Authentication System** - Login page with admin credentials
-- 🔄 **Login State Persistence** - Stay logged in even after page refresh (NEW!)
+- 🔄 **Login State Persistence** - Stay logged in even after page refresh
 - 📤 **Image Upload** - Upload up to 2 images simultaneously
 - 🖼️ **Grid Layout** - Display multiple images in a responsive 3-column grid
-- ✨ **Auto Default Annotation** - Automatic rectangle annotation upon image upload
+- ⭕ **Auto Default Circle Annotation** - Automatic circle annotation upon image upload (NEW! 🎉)
 - ✏️ **Polygon Annotation** - Create irregular polygons with unlimited control points
 - ➕ **Click-to-Add Points** - Click on any edge line to insert new control points
 - 🎯 **Interactive Points** - Drag and adjust annotation control points freely
-- 📦 **One-Click Export** - Export all images and annotations as JSON with Base64 encoded images (NEW!)
+- 📦 **One-Click Export** - Export all images and annotations as JSON with Base64 encoded images
 - 💾 **Complete Data Preservation** - Save both image data and annotation coordinates
 - 🎨 **Modern UI** - Beautiful interface powered by Ant Design
 - 📱 **Responsive Design** - Works seamlessly across different screen sizes
@@ -76,11 +76,12 @@ Enter the credentials to access the annotation system.
 
 ### 3. Annotate Images
 
-**🎉 New Feature**: Images are automatically annotated with a default rectangle upon upload!
+**🎉 Updated Feature**: Images are automatically annotated with a default circle upon upload!
 
-#### Automatic Default Annotation
-- Upon image upload, a **default rectangular annotation** is automatically created
-- The rectangle covers the center area of the image (70% of image size)
+#### Automatic Default Circle Annotation (NEW! ⭕)
+- Upon image upload, a **default circular annotation** is automatically created
+- The circle is centered on the image with a radius proportional to the image size
+- Smooth circle shape with 16 control points
 - No need to click "Start Annotation" - ready to edit immediately!
 
 #### Adjust Annotation
@@ -93,9 +94,9 @@ Enter the credentials to access the annotation system.
 
 #### Manage Annotations
 - **Instructions**: View usage instructions
-- **Reset Annotation**: Restore to default rectangle (4 points)
+- **Reset Annotation**: Restore to default circle (16 points)
 - **Save Annotation**: Export annotation data to browser console (for individual images)
-- **Export** (NEW! 🎉): Export all images and annotations as a single JSON file
+- **Export**: Export all images and annotations as a single JSON file
 
 ### 4. Export All Data (NEW! 🚀)
 
