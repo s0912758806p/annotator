@@ -11,13 +11,15 @@ A modern, interactive image annotation tool built with React, TypeScript, and Ko
 ## ✨ Features
 
 - 🔐 **Simple Authentication System** - Login page with admin credentials
+- 🔄 **Login State Persistence** - Stay logged in even after page refresh (NEW!)
 - 📤 **Image Upload** - Upload up to 2 images simultaneously
 - 🖼️ **Grid Layout** - Display multiple images in a responsive 3-column grid
-- ✨ **Auto Default Annotation** - Automatic rectangle annotation upon image upload (NEW!)
+- ✨ **Auto Default Annotation** - Automatic rectangle annotation upon image upload
 - ✏️ **Polygon Annotation** - Create irregular polygons with unlimited control points
-- ➕ **Click-to-Add Points** - Click on any edge line to insert new control points (NEW!)
+- ➕ **Click-to-Add Points** - Click on any edge line to insert new control points
 - 🎯 **Interactive Points** - Drag and adjust annotation control points freely
-- 💾 **Data Export** - Save annotation data to console (ready for backend integration)
+- 📦 **One-Click Export** - Export all images and annotations as JSON with Base64 encoded images (NEW!)
+- 💾 **Complete Data Preservation** - Save both image data and annotation coordinates
 - 🎨 **Modern UI** - Beautiful interface powered by Ant Design
 - 📱 **Responsive Design** - Works seamlessly across different screen sizes
 
@@ -92,9 +94,39 @@ Enter the credentials to access the annotation system.
 #### Manage Annotations
 - **Instructions**: View usage instructions
 - **Reset Annotation**: Restore to default rectangle (4 points)
-- **Save Annotation**: Export annotation data to browser console
+- **Save Annotation**: Export annotation data to browser console (for individual images)
+- **Export** (NEW! 🎉): Export all images and annotations as a single JSON file
 
-### 4. Logout
+### 4. Export All Data (NEW! 🚀)
+
+Click the **"Export"** button next to the upload button to export all images and annotations:
+
+- **Format**: JSON file with Base64 encoded images
+- **File Name**: `annotations-{timestamp}.json`
+- **Content**: Complete image data + annotation coordinates + dimensions
+- **Use Cases**: Data backup, sharing, model training, analysis
+
+**Export Data Structure**:
+```json
+[
+  {
+    "imageName": "example.jpg",
+    "imageData": "data:image/jpeg;base64,...(complete Base64 image data)",
+    "annotations": {
+      "points": [
+        { "x": 90, "y": 60 },
+        { "x": 510, "y": 60 },
+        { "x": 510, "y": 340 },
+        { "x": 90, "y": 340 }
+      ],
+      "dimensions": { "width": 600, "height": 400 }
+    },
+    "timestamp": "2025-11-13T10:30:45.123Z"
+  }
+]
+```
+
+### 5. Logout
 
 Click the "Logout" button in the top-right corner to return to the login page.
 

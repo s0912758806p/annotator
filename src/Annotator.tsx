@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, createRef } from 'react';
 import { Upload, Button, message, Card, Space } from 'antd';
 import { UploadOutlined, LogoutOutlined, ExportOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
-import ImageAnnotation from './ImageAnnotation';
+import ImageAnnotation, { type ImageAnnotationRef } from './ImageAnnotation';
 import './Annotator.css';
 
 interface AnnotatorProps {
@@ -18,12 +18,15 @@ interface ImageData {
 const Annotator = ({ onLogout }: AnnotatorProps) => {
   const [images, setImages] = useState<ImageData[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const annotationRefs = useRef<Map<string, React.RefObject<ImageAnnotationRef | null>>>(new Map());
 
   const handleUpload: UploadProps['onChange'] = ({ fileList: newFileList }) => {
     const limitedFileList = newFileList.slice(0, 2);
     setFileList(limitedFileList);
 
     const newImages: ImageData[] = [];
+    const newRefs = new Map<string, React.RefObject<ImageAnnotationRef | null>>();
+    
     limitedFileList.forEach((file) => {
       if (file.originFileObj && file.status !== 'error') {
         const url = URL.createObjectURL(file.originFileObj);
@@ -32,8 +35,11 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
           url: url,
           file: file.originFileObj,
         });
+        newRefs.set(file.uid, createRef<ImageAnnotationRef | null>());
       }
     });
+    
+    annotationRefs.current = newRefs;
     setImages(newImages);
 
     if (newFileList.length > 2) {
@@ -76,12 +82,60 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
       URL.revokeObjectURL(imageToRemove.url);
     }
     
+    annotationRefs.current.delete(imageId);
     setImages(images.filter((img) => img.id !== imageId));
     message.success('圖片已刪除');
   };
 
-  const handleExport = () => {
-    console.log('匯出');
+  const handleExport = async () => {
+    if (images.length === 0) {
+      message.warning('沒有可匯出的圖片！');
+      return;
+    }
+
+    try {
+      const exportData = [];
+
+      for (const image of images) {
+        const ref = annotationRefs.current.get(image.id);
+        if (ref?.current) {
+          const annotationData = ref.current.getAnnotationData();
+          
+          const imageBase64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(image.file);
+          });
+
+          exportData.push({
+            imageName: annotationData.imageName,
+            imageData: imageBase64,
+            annotations: {
+              points: annotationData.points,
+              dimensions: annotationData.dimensions,
+            },
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
+
+      const jsonData = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `annotations-${new Date().getTime()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      message.success('標註數據已成功匯出！');
+    } catch (error) {
+      console.error('匯出失敗：', error);
+      message.error('匯出失敗，請重試！');
+    }
   };
 
   useEffect(() => {
@@ -128,15 +182,19 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
 
           {images.length > 0 && (
             <div className="images-container">
-              {images.map((image) => (
-                <div key={image.id} className="image-item">
-                  <ImageAnnotation 
-                    imageUrl={image.url} 
-                    imageName={image.file.name}
-                    onDelete={() => handleDeleteImage(image.id)}
-                  />
-                </div>
-              ))}
+              {images.map((image) => {
+                const ref = annotationRefs.current.get(image.id);
+                return (
+                  <div key={image.id} className="image-item">
+                    <ImageAnnotation 
+                      ref={ref}
+                      imageUrl={image.url} 
+                      imageName={image.file.name}
+                      onDelete={() => handleDeleteImage(image.id)}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </Space>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Stage, Layer, Image as KonvaImage, Line, Circle } from 'react-konva';
 import { Button, Space, message } from 'antd';
 import { DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
@@ -15,12 +15,31 @@ interface ImageAnnotationProps {
   onDelete: () => void;
 }
 
-const ImageAnnotation = ({ imageUrl, imageName, onDelete }: ImageAnnotationProps) => {
+export interface ImageAnnotationRef {
+  getAnnotationData: () => {
+    imageName: string;
+    imageUrl: string;
+    points: Point[];
+    dimensions: { width: number; height: number };
+  };
+}
+
+const ImageAnnotation = forwardRef<ImageAnnotationRef, ImageAnnotationProps>(
+  ({ imageUrl, imageName, onDelete }, ref) => {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
   const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    getAnnotationData: () => ({
+      imageName,
+      imageUrl,
+      points,
+      dimensions,
+    }),
+  }));
 
   useEffect(() => {
     const img = new window.Image();
@@ -294,6 +313,8 @@ const ImageAnnotation = ({ imageUrl, imageName, onDelete }: ImageAnnotationProps
       )}
     </div>
   );
-};
+});
+
+ImageAnnotation.displayName = 'ImageAnnotation';
 
 export default ImageAnnotation;
