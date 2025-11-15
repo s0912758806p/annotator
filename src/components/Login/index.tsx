@@ -15,12 +15,12 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
     
     setTimeout(() => {
       if (values.username === 'admin' && values.password === '123456') {
-        message.success('登錄成功！');
+        message.success('Login successful!');
 
         localStorage.setItem('isLoggedIn', 'true');
         onLoginSuccess();
       } else {
-        message.error('賬號或密碼錯誤！');
+        message.error('Invalid username or password!');
         localStorage.setItem('isLoggedIn', 'false');
       }
       setLoading(false);
@@ -29,7 +29,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
 
   return (
     <div className="login-container">
-      <Card className="login-card" title="圖片標註系統登錄">
+      <Card className="login-card" title="Annotator">
         <Form
           name="login"
           onFinish={onFinish}
@@ -38,21 +38,21 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
         >
           <Form.Item
             name="username"
-            rules={[{ required: true, message: '請輸入賬號！' }]}
+            rules={[{ required: true, message: 'Please enter username!' }]}
           >
             <Input 
               prefix={<UserOutlined />} 
-              placeholder="賬號：admin" 
+              placeholder="Username" 
             />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: '請輸入密碼！' }]}
+            rules={[{ required: true, message: 'Please enter password!' }]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              placeholder="密碼：123456"
+              placeholder="Password"
             />
           </Form.Item>
 
@@ -63,7 +63,7 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
               loading={loading}
               block
             >
-              登錄
+              Login
             </Button>
           </Form.Item>
         </Form>

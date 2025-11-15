@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, createRef } from 'react';
-import { Upload, Button, message, Card, Space } from 'antd';
+import { Upload, Button, message, Space } from 'antd';
 import { UploadOutlined, LogoutOutlined, ExportOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
+import * as exifr from 'exifr';
 import ImageAnnotation, { type ImageAnnotationRef } from '../ImageAnnotation/index';
 import './index.scss';
 
@@ -43,22 +44,81 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
     setImages(newImages);
 
     if (newFileList.length > 2) {
-      message.warning('最多只能上傳2張圖片！');
+      message.warning('Maximum 2 images allowed!');
     }
   };
 
-  const beforeUpload = (file: File) => {
-    const isImage = file.type.startsWith('image/');
-    if (!isImage) {
-      message.error('只能上傳圖片文件！');
+  const beforeUpload = async (file: File) => {
+    // 1. Check file format
+    const validFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validFormats.includes(file.type.toLowerCase())) {
+      message.error(`Invalid format! Only ${validFormats.join(', ')} are allowed.`);
       return false;
     }
-    const isLt10M = file.size / 1024 / 1024 < 10;
-    if (!isLt10M) {
-      message.error('圖片大小不能超過 10MB！');
+
+    // 2. Check file size (quality indicator)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      message.error('Image size must not exceed 10MB!');
       return false;
     }
-    return false;
+
+    // 3. Check minimum file size (quality check)
+    const minSize = 10 * 1024; // 10KB minimum
+    if (file.size < minSize) {
+      message.error('Image quality too low (file size too small)!');
+      return false;
+    }
+
+    // 4. Check resolution and orientation using Image object
+    try {
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = URL.createObjectURL(file);
+      });
+
+      // Check minimum resolution
+      const minWidth = 200;
+      const minHeight = 200;
+      if (img.width < minWidth || img.height < minHeight) {
+        message.error(`Image resolution too low! Minimum ${minWidth}x${minHeight} required.`);
+        URL.revokeObjectURL(img.src);
+        return false;
+      }
+
+      // Check maximum resolution
+      const maxWidth = 4096;
+      const maxHeight = 4096;
+      if (img.width > maxWidth || img.height > maxHeight) {
+        message.error(`Image resolution too high! Maximum ${maxWidth}x${maxHeight} allowed.`);
+        URL.revokeObjectURL(img.src);
+        return false;
+      }
+
+      // 5. Check EXIF data for orientation
+      try {
+        const exifData = await exifr.parse(file) as { Orientation?: number } | undefined;
+        if (exifData) {
+          const orientation: number | undefined = exifData.Orientation;
+          if (orientation && orientation !== 1) {
+            message.warning(`Image orientation detected (EXIF: ${orientation}). Image will be displayed as-is.`);
+          }
+        }
+      } catch {
+        // EXIF data not available or error reading it, continue anyway
+        console.log('EXIF data not available');
+      }
+
+      URL.revokeObjectURL(img.src);
+      message.success(`Image validated: ${img.width}x${img.height}, ${(file.size / 1024).toFixed(2)}KB`);
+    } catch {
+      message.error('Failed to validate image!');
+      return false;
+    }
+
+    return false; // Prevent auto upload, we handle it manually
   };
 
   const handleRemove = (file: UploadFile) => {
@@ -84,12 +144,12 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
     
     annotationRefs.current.delete(imageId);
     setImages(images.filter((img) => img.id !== imageId));
-    message.success('圖片已刪除');
+    message.success('Image deleted');
   };
 
   const handleExport = async () => {
     if (images.length === 0) {
-      message.warning('沒有可匯出的圖片！');
+      message.warning('No images to export!');
       return;
     }
 
@@ -131,10 +191,10 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      message.success('標註數據已成功匯出！');
+      message.success('Annotation data exported successfully!');
     } catch (error) {
-      console.error('匯出失敗：', error);
-      message.error('匯出失敗，請重試！');
+      console.error('Export failed:', error);
+      message.error('Export failed, please try again!');
     }
   };
 
@@ -148,57 +208,61 @@ const Annotator = ({ onLogout }: AnnotatorProps) => {
   return (
     <div className="annotator-container">
       <div className="annotator-header">
-        <h1>圖片標註系統</h1>
+        <h1>Annotator</h1>
         <Button 
           icon={<LogoutOutlined />} 
           onClick={onLogout}
           danger
         >
-          登出
+          Logout
         </Button>
       </div>
 
-      <Card className="upload-card">
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div className="upload-and-export-container">
-            <Upload
-              fileList={fileList}
-              onChange={handleUpload}
-              beforeUpload={beforeUpload}
-              onRemove={handleRemove}
-              multiple
-              maxCount={2}
-              showUploadList={false}
-            >
-              <Button icon={<UploadOutlined />}>
-                上傳圖片 (最多2張)
-              </Button>
-            </Upload>
-
-            <Button type="primary" disabled={images.length === 0} icon={<ExportOutlined />} onClick={handleExport}>
-              匯出
+      <div className="upload-section">
+        <Space size="large">
+          <Upload
+            fileList={fileList}
+            onChange={handleUpload}
+            beforeUpload={beforeUpload}
+            onRemove={handleRemove}
+            multiple
+            maxCount={2}
+            showUploadList={false}
+          >
+            <Button icon={<UploadOutlined />} size="large">
+              Upload Images (Max 2)
             </Button>
-          </div>
+          </Upload>
 
-          {images.length > 0 && (
-            <div className="images-container">
-              {images.map((image) => {
-                const ref = annotationRefs.current.get(image.id);
-                return (
-                  <div key={image.id} className="image-item">
-                    <ImageAnnotation 
-                      ref={ref}
-                      imageUrl={image.url} 
-                      imageName={image.file.name}
-                      onDelete={() => handleDeleteImage(image.id)}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <Button 
+            type="primary" 
+            size="large"
+            disabled={images.length === 0} 
+            icon={<ExportOutlined />} 
+            onClick={handleExport}
+          >
+            Export All
+          </Button>
         </Space>
-      </Card>
+      </div>
+
+      {images.length > 0 && (
+        <div className="images-container">
+          {images.map((image) => {
+            const ref = annotationRefs.current.get(image.id);
+            return (
+              <div key={image.id} className="image-item">
+                <ImageAnnotation 
+                  ref={ref}
+                  imageUrl={image.url} 
+                  imageName={image.file.name}
+                  onDelete={() => handleDeleteImage(image.id)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

@@ -21,9 +21,9 @@
   color: #1890ff;
 }
 
-.upload-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.upload-section {
+  padding: 20px 0;
+  margin-bottom: 24px;
 }
 
 .images-container {
@@ -45,10 +45,9 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+  transition: box-shadow 0.3s ease;
 
-.upload-and-export-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 }
