@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ConfigProvider } from 'antd';
 import zhTW from 'antd/locale/zh_TW';
-import Login from './Login';
-import Annotator from './Annotator';
+import Login from './components/Login';
+import Annotator from './components/Annotator';
 import './App.css';
 
 const STORAGE_KEY = 'isLoggedIn';

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, createRef } from 'react';
 import { Upload, Button, message, Card, Space } from 'antd';
 import { UploadOutlined, LogoutOutlined, ExportOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
-import ImageAnnotation, { type ImageAnnotationRef } from './ImageAnnotation';
-import './Annotator.css';
+import ImageAnnotation, { type ImageAnnotationRef } from '../ImageAnnotation/index';
+import './index.scss';
 
 interface AnnotatorProps {
   onLogout: () => void;
