@@ -1,54 +1,82 @@
 # Image Annotation System
 
-A modern, interactive image annotation tool built with React, TypeScript, and Konva. This application allows users to upload images and create polygon annotations with adjustable control points.
+A modern, professional image annotation tool built with React, TypeScript, and Konva. This application enables users to upload images, create precise polygon annotations with adjustable control points, and export annotated results.
 
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=flat&logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-7.2.2-646CFF?style=flat&logo=vite)
-![Ant Design](https://img.shields.io/badge/Ant%20Design-Latest-0170FE?style=flat&logo=antdesign)
-![Konva](https://img.shields.io/badge/Konva-Latest-FF6B6B?style=flat)
+![Ant Design](https://img.shields.io/badge/Ant%20Design-5.28.1-0170FE?style=flat&logo=antdesign)
+![Konva](https://img.shields.io/badge/Konva-10.0.8-FF6B6B?style=flat)
+![Sass](https://img.shields.io/badge/Sass-1.94.0-CC6699?style=flat&logo=sass)
 
 ## ✨ Features
 
-- 🔐 **Simple Authentication System** - Login page with admin credentials
-- 🔄 **Login State Persistence** - Stay logged in even after page refresh
-- 📤 **Image Upload** - Upload up to 2 images simultaneously
-- 🖼️ **Grid Layout** - Display multiple images in a responsive 3-column grid
-- ⭕ **Auto Default Circle Annotation** - Automatic circle annotation upon image upload (NEW! 🎉)
-- ✏️ **Polygon Annotation** - Create irregular polygons with unlimited control points
-- ➕ **Click-to-Add Points** - Click on any edge line to insert new control points
-- 🎯 **Interactive Points** - Drag and adjust annotation control points freely
-- 📦 **One-Click Export** - Export all images and annotations as JSON with Base64 encoded images
-- 💾 **Complete Data Preservation** - Save both image data and annotation coordinates
-- 🎨 **Modern UI** - Beautiful interface powered by Ant Design
-- 📱 **Responsive Design** - Works seamlessly across different screen sizes
+### 🔐 Authentication
+- **Simple Login System** - Secure access with admin credentials
+- **Session Persistence** - Stay logged in across page refreshes using localStorage
+
+### 📤 Image Management
+- **Multi-Image Upload** - Upload up to 2 images simultaneously
+- **Advanced Validation** - Comprehensive image validation before upload:
+  - ✅ Format check (JPEG, PNG, GIF, WEBP)
+  - ✅ Resolution validation (200x200 to 4096x4096)
+  - ✅ File size limits (10KB to 10MB)
+  - ✅ EXIF orientation detection
+  - ✅ Quality assessment
+- **Responsive Grid Layout** - Clean 3-column grid display for multiple images
+
+### 🎨 Annotation Tools
+- **Auto Default Circle** - Automatic 16-point circular annotation on upload
+- **Polygon Annotation** - Create complex shapes with unlimited control points
+- **Interactive Editing**:
+  - 🖱️ Drag nodes to adjust shape (5px precision nodes)
+  - ➕ Click edges to add new control points
+  - 🎯 Visual feedback with semi-transparent blue overlay
+  - 🔴 Selected point highlighting
+- **Easy Controls**:
+  - Reset to default circle
+  - Save annotation data to console
+  - Delete individual images
+
+### 💾 Export Capabilities
+- **Individual Image Download** - Download image with annotation overlay as PNG
+- **Batch Export** - Export all images and annotations as JSON
+- **Complete Data Preservation** - Base64 encoded images with annotation coordinates
+- **Timestamp Tracking** - Automatic timestamp for each annotation
+
+### 🎨 Modern UI/UX
+- **Clean Interface** - Minimalist design with Ant Design components
+- **Icon-Based Actions** - Intuitive download and delete icons
+- **Hover Effects** - Visual feedback on image cards
+- **Responsive Design** - Works seamlessly across different screen sizes
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- **Node.js** v16 or higher
+- **npm** or **yarn**
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
 git clone <repository-url>
 cd annotator
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 ```bash
 npm install
 ```
 
-3. Start the development server:
+3. **Start the development server:**
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. **Open your browser:**
+Navigate to `http://localhost:5173`
 
 ### Build for Production
 
@@ -58,167 +86,314 @@ npm run build
 
 The built files will be in the `dist` directory.
 
-## 📖 How to Use
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## 📖 Usage Guide
 
 ### 1. Login
+
+Access the annotation system with default credentials:
 
 - **Username**: `admin`
 - **Password**: `123456`
 
-Enter the credentials to access the annotation system.
+> ⚠️ Note: These are demo credentials. In production, implement proper authentication.
 
 ### 2. Upload Images
 
-- Click the "Upload Images" button
-- Select 1-2 image files (max 2 images, 10MB per file)
-- Supported formats: JPG, PNG, GIF, etc.
-- Images will be displayed in a grid layout
+1. Click the **"Upload Images (Max 2)"** button
+2. Select 1-2 image files from your device
+3. Images are automatically validated:
+   - Format verification
+   - Resolution check (200x200 to 4096x4096)
+   - File size validation (10KB to 10MB)
+   - EXIF data extraction
+4. Valid images appear in the grid with automatic circular annotations
+
+**Validation Messages:**
+- ✅ Success: `Image validated: 1920x1080, 245.67KB`
+- ❌ Error: `Image resolution too low! Minimum 200x200 required.`
+- ⚠️ Warning: `Image orientation detected (EXIF: 6). Image will be displayed as-is.`
 
 ### 3. Annotate Images
 
-**🎉 Updated Feature**: Images are automatically annotated with a default circle upon upload!
+#### Automatic Circle Annotation
+- Upon upload, a **default circular annotation** is automatically created
+- 16 evenly distributed control points
+- Centered on the image with proportional radius
+- Ready to edit immediately
 
-#### Automatic Default Circle Annotation (NEW! ⭕)
-- Upon image upload, a **default circular annotation** is automatically created
-- The circle is centered on the image with a radius proportional to the image size
-- Smooth circle shape with 16 control points
-- No need to click "Start Annotation" - ready to edit immediately!
+#### Edit Annotation
+**Drag Points:**
+- Click and drag any 5px control point to reshape the annotation
+- Selected points are highlighted in red
+- Cursor changes to "move" icon when hovering over points
 
-#### Adjust Annotation
-- **Drag Points**: Click and drag any control point to adjust the polygon shape
-- **Add New Points**: Click on any edge line to insert a new control point at that position
-  - Cursor changes to crosshair when hovering over edges
-  - Creates irregular polygon shapes with unlimited points
-- **Visual Feedback**: The polygon area is highlighted in semi-transparent blue
-- **Point Selection**: Selected points are highlighted in red
+**Add New Points:**
+- Hover over any edge line (cursor changes to crosshair)
+- Click to insert a new control point at that exact position
+- Create complex irregular polygons with unlimited points
+- Success message: `New node added! Total 24 nodes`
+
+**Visual Feedback:**
+- Semi-transparent blue fill shows annotated area
+- Blue outline marks the polygon boundary
+- White-bordered control points for easy visibility
 
 #### Manage Annotations
-- **Instructions**: View usage instructions
-- **Reset Annotation**: Restore to default circle (16 points)
-- **Save Annotation**: Export annotation data to browser console (for individual images)
-- **Export**: Export all images and annotations as a single JSON file
+- **Reset** - Restore to default 16-point circle
+- **Save** - Log annotation data to browser console
+- **Download** - Export image with annotation overlay as PNG
+- **Delete** - Remove image from the session
 
-### 4. Export All Data (NEW! 🚀)
+### 4. Download Individual Image
 
-Click the **"Export"** button next to the upload button to export all images and annotations:
+Click the **download icon** (📥) next to the image name to:
+- Export the image with annotation overlay
+- Includes polygon fill, outline, and control points
+- Saves as `{original-name}_annotated.png`
+- PNG format with transparency support
 
-- **Format**: JSON file with Base64 encoded images
-- **File Name**: `annotations-{timestamp}.json`
-- **Content**: Complete image data + annotation coordinates + dimensions
-- **Use Cases**: Data backup, sharing, model training, analysis
+### 5. Export All Data
 
-**Export Data Structure**:
+Click the **"Export All"** button to export all images and annotations:
+
+**Export Format:**
 ```json
 [
   {
     "imageName": "example.jpg",
-    "imageData": "data:image/jpeg;base64,...(complete Base64 image data)",
+    "imageData": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
     "annotations": {
       "points": [
-        { "x": 90, "y": 60 },
-        { "x": 510, "y": 60 },
-        { "x": 510, "y": 340 },
-        { "x": 90, "y": 340 }
+        { "x": 300, "y": 200 },
+        { "x": 450, "y": 210 },
+        { "x": 480, "y": 350 },
+        { "x": 290, "y": 340 }
       ],
-      "dimensions": { "width": 600, "height": 400 }
+      "dimensions": { 
+        "width": 600, 
+        "height": 400 
+      }
     },
-    "timestamp": "2025-11-13T10:30:45.123Z"
+    "timestamp": "2025-11-15T12:30:45.123Z"
   }
 ]
 ```
 
-### 5. Logout
+**File Name:** `annotations-{timestamp}.json`
 
-Click the "Logout" button in the top-right corner to return to the login page.
+**Use Cases:**
+- Machine learning training data
+- Data backup and archiving
+- Sharing annotations with team members
+- Batch processing pipelines
+
+### 6. Logout
+
+Click the **"Logout"** button in the header to return to the login page.
 
 ## 🛠️ Tech Stack
 
 ### Core Technologies
 
-- **[React 19.2.0](https://react.dev/)** - Latest React with improved performance
-- **[TypeScript 5.9.3](https://www.typescriptlang.org/)** - Type-safe development
-- **[Vite 7.2.2](https://vitejs.dev/)** - Lightning-fast build tool with SWC
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [React](https://react.dev/) | 19.2.0 | UI library with latest features |
+| [TypeScript](https://www.typescriptlang.org/) | 5.9.3 | Type-safe development |
+| [Vite](https://vitejs.dev/) | 7.2.2 | Lightning-fast build tool with HMR |
 
 ### UI & Styling
 
-- **[Ant Design](https://ant.design/)** - Enterprise-class UI components
-  - Form, Upload, Button, Card, Message components
-  - Chinese (Traditional) locale support
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Ant Design](https://ant.design/) | 5.28.1 | Enterprise-class UI components |
+| [Sass](https://sass-lang.com/) | 1.94.0 | Advanced CSS preprocessing |
 
-### Canvas & Drawing
+**Ant Design Components Used:**
+- Form, Input, Button, Upload, Space
+- Message notifications
+- Card (for image containers)
 
-- **[Konva](https://konvajs.org/)** - 2D canvas library for interactive graphics
-- **[React-Konva](https://konvajs.org/docs/react/)** - React wrapper for Konva
-  - Stage, Layer, Image, Line, Circle components
+### Canvas & Graphics
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Konva](https://konvajs.org/) | 10.0.8 | 2D canvas library for annotations |
+| [React-Konva](https://konvajs.org/docs/react/) | 19.2.0 | React wrapper for Konva |
+
+**Konva Components:**
+- Stage, Layer, Image
+- Line (for polygon outlines)
+- Circle (for control points)
+
+### Image Processing
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [exifr](https://github.com/MikeKovarik/exifr) | Latest | EXIF data extraction and image metadata |
 
 ## 📁 Project Structure
 
 ```
 annotator/
 ├── src/
-│   ├── App.tsx                 # Main application component
-│   ├── App.css                 # Main application styles
-│   ├── main.tsx                # Application entry point
-│   ├── index.css               # Global styles
+│   ├── components/                # React components
+│   │   ├── Login/
+│   │   │   ├── index.tsx          # Login component
+│   │   │   └── index.scss         # Login styles
+│   │   ├── Annotator/
+│   │   │   ├── index.tsx          # Main annotation page
+│   │   │   └── index.scss         # Annotator styles
+│   │   └── ImageAnnotation/
+│   │       ├── index.tsx          # Single image annotation
+│   │       └── index.scss         # Image annotation styles
 │   │
-│   ├── Login.tsx               # Login page component
-│   ├── Login.css               # Login page styles
-│   │
-│   ├── Annotator.tsx           # Main annotation page (upload & display)
-│   ├── Annotator.css           # Annotation page styles
-│   │
-│   ├── ImageAnnotation.tsx     # Single image annotation component
-│   │
-│   └── assets/                 # Static assets
+│   ├── App.tsx                    # Root application component
+│   ├── App.css                    # Global app styles
+│   ├── main.tsx                   # Application entry point
+│   ├── index.css                  # Global CSS reset
+│   └── assets/                    # Static assets
 │
-├── public/                     # Public assets
-├── package.json                # Dependencies and scripts
-├── vite.config.ts              # Vite configuration
-├── tsconfig.json               # TypeScript configuration
-└── README.md                   # This file
+├── public/                        # Public static files
+├── dist/                          # Production build output
+│
+├── package.json                   # Dependencies and scripts
+├── vite.config.ts                 # Vite configuration
+├── tsconfig.json                  # TypeScript configuration
+├── tsconfig.app.json              # App-specific TS config
+├── tsconfig.node.json             # Node-specific TS config
+├── eslint.config.js               # ESLint configuration
+└── README.md                      # This file
 ```
 
-## 🎨 Key Components
+## 🎨 Component Architecture
 
 ### App Component
-Main application component that manages authentication state and routing between Login and Annotator pages.
+**Purpose:** Root component managing authentication state and routing
+
+**Features:**
+- Session state management with localStorage
+- Route switching between Login and Annotator
+- Ant Design ConfigProvider for global settings
 
 ### Login Component
-Simple authentication interface with form validation. Uses fixed credentials for demonstration purposes.
+**Purpose:** Simple authentication interface
+
+**Features:**
+- Form validation with Ant Design Form
+- Fixed credentials for demonstration (admin/123456)
+- localStorage-based session persistence
+- Error and success message handling
+
+**Props:**
+```typescript
+interface LoginProps {
+  onLoginSuccess: () => void;
+}
+```
 
 ### Annotator Component
-Handles image upload, display, and management. Enforces the 2-image upload limit and manages the grid layout.
+**Purpose:** Main image management and upload interface
+
+**Features:**
+- Multi-image upload with validation
+- Advanced image validation (format, resolution, size, EXIF)
+- Image grid display with responsive layout
+- Batch export functionality
+- Session validation
+
+**Key Functions:**
+- `beforeUpload()` - Comprehensive image validation
+- `handleUpload()` - Image upload management
+- `handleExport()` - Batch JSON export with Base64 images
+- `handleDeleteImage()` - Individual image removal
 
 ### ImageAnnotation Component
-Core annotation functionality using Konva:
-- Image rendering on canvas
-- Polygon drawing with multiple points
-- Interactive draggable control points
-- Real-time visual feedback
+**Purpose:** Core annotation functionality for individual images
 
-## 💾 Annotation Data Format
+**Features:**
+- Canvas-based image rendering
+- Automatic circle annotation (16 points)
+- Interactive polygon editing
+- Node manipulation (drag, add, select)
+- Individual image download with annotation overlay
 
-Annotation data is exported in the following JSON format:
+**Key Functions:**
+- `createCirclePoints()` - Generate default circular annotation
+- `handlePointDragMove()` - Node position updates
+- `handleLineClick()` - Add new points on edges
+- `handleDownloadWithAnnotation()` - Export annotated image as PNG
+- `findClosestLineSegment()` - Edge click detection algorithm
 
+**Props:**
+```typescript
+interface ImageAnnotationProps {
+  imageUrl: string;
+  imageName: string;
+  onDelete: () => void;
+}
+```
+
+**Ref Methods:**
+```typescript
+interface ImageAnnotationRef {
+  getAnnotationData: () => {
+    imageName: string;
+    imageUrl: string;
+    points: Point[];
+    dimensions: { width: number; height: number };
+  };
+}
+```
+
+## 💾 Data Formats
+
+### Annotation Point
+```typescript
+interface Point {
+  x: number;  // X coordinate in pixels
+  y: number;  // Y coordinate in pixels
+}
+```
+
+### Console Save Format
 ```json
 {
   "image": "example.jpg",
   "points": [
     { "x": 100, "y": 150 },
-    { "x": 300, "y": 150 },
-    { "x": 300, "y": 350 },
-    { "x": 100, "y": 350 }
+    { "x": 300, "y": 150 }
   ],
-  "timestamp": "2025-11-12T10:30:00.000Z"
+  "timestamp": "2025-11-15T12:30:00.000Z"
 }
+```
+
+### Batch Export Format
+```json
+[
+  {
+    "imageName": "example.jpg",
+    "imageData": "data:image/jpeg;base64,...",
+    "annotations": {
+      "points": [...],
+      "dimensions": { "width": 600, "height": 400 }
+    },
+    "timestamp": "2025-11-15T12:30:45.123Z"
+  }
+]
 ```
 
 ## 🔧 Configuration
 
-### Upload Limits
+### Image Upload Limits
 
-To change the maximum number of uploadable images, modify the `maxCount` prop in `Annotator.tsx`:
-
+**Maximum Images:**
+Modify `maxCount` in `src/components/Annotator/index.tsx`:
 ```typescript
 <Upload
   maxCount={2}  // Change this value
@@ -226,79 +401,164 @@ To change the maximum number of uploadable images, modify the `maxCount` prop in
 >
 ```
 
-### Image Size Limits
-
-Adjust the file size limit in `Annotator.tsx`:
-
+**File Size Limits:**
+Adjust validation in `beforeUpload()`:
 ```typescript
-const isLt10M = file.size / 1024 / 1024 < 10;  // 10MB limit
+const maxSize = 10 * 1024 * 1024; // 10MB
+const minSize = 10 * 1024;        // 10KB
 ```
 
-### Grid Columns
+**Resolution Limits:**
+Modify in `beforeUpload()`:
+```typescript
+const minWidth = 200;    // Minimum width
+const minHeight = 200;   // Minimum height
+const maxWidth = 4096;   // Maximum width
+const maxHeight = 4096;  // Maximum height
+```
 
-Modify the grid layout in `Annotator.css`:
+### Annotation Defaults
 
-```css
+**Control Point Size:**
+Adjust in `src/components/ImageAnnotation/index.tsx`:
+```typescript
+<Circle
+  radius={5}        // Point radius in pixels
+  strokeWidth={1.5} // Border width
+  // ...
+/>
+```
+
+**Default Circle Points:**
+Modify in `createCirclePoints()`:
+```typescript
+const numPoints = 16;  // Number of initial points
+const radius = Math.min(width, height) * 0.35;  // Circle size ratio
+```
+
+### Grid Layout
+
+**Responsive Breakpoints:**
+Modify in `src/components/Annotator/index.scss`:
+```scss
 @media (min-width: 1400px) {
   .images-container {
-    grid-template-columns: repeat(3, 1fr);  /* Max 3 columns */
+    grid-template-columns: repeat(3, 1fr); // 3 columns on large screens
   }
 }
 ```
 
-## 📝 Scripts
+## 📝 Available Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
+| `npm run dev` | Start development server with HMR |
+| `npm run build` | Type check and build for production |
+| `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint checks |
 
 ## 🚧 Future Enhancements
 
-### Backend Integration
-- [ ] Implement RESTful API for annotation storage
-- [ ] User authentication with database
-- [ ] Multi-user collaboration support
+### High Priority
+- [ ] **Undo/Redo** - Action history for annotation editing
+- [ ] **Delete Individual Points** - Remove specific control points
+- [ ] **Zoom & Pan** - Navigate large images easily
+- [ ] **Keyboard Shortcuts** - Improve workflow efficiency
+- [ ] **Autosave** - Prevent data loss
 
-### Feature Improvements
-- [ ] Support for more image formats
-- [ ] Image zoom and pan functionality
-- [ ] Annotation categories and labels
-- [ ] Export annotations as JSON/CSV/XML
-- [ ] Undo/redo functionality
-- [ ] Keyboard shortcuts
+### Backend Integration
+- [ ] RESTful API for annotation storage
+- [ ] Database-backed user authentication
+- [ ] Multi-user collaboration
+- [ ] Cloud storage for images
+- [ ] Real-time synchronization
+
+### Advanced Features
+- [ ] Multiple annotation types (rectangle, ellipse, freehand)
+- [ ] Annotation labels and categories
+- [ ] Image preprocessing (crop, rotate, adjust)
+- [ ] Batch upload and processing
+- [ ] CSV/XML export formats
+- [ ] Annotation templates
 
 ### User Experience
-- [ ] Tutorial/onboarding guide
+- [ ] Interactive tutorial/onboarding
 - [ ] Dark mode support
-- [ ] Mobile optimization
-- [ ] Batch operations
-- [ ] Progress autosave
+- [ ] Mobile touch optimization
+- [ ] Annotation history view
+- [ ] Search and filter images
+- [ ] Drag-and-drop upload
 
 ### Performance
-- [ ] Lazy loading for large images
-- [ ] Virtual scrolling for many images
+- [ ] Lazy loading for large image sets
+- [ ] Virtual scrolling
+- [ ] Web Worker for image processing
 - [ ] Annotation data compression
-- [ ] Web Worker for heavy operations
+- [ ] Progressive image loading
 
 ## 🐛 Known Limitations
 
-1. **Upload Limit**: Maximum 2 images per upload (configurable)
-2. **Data Storage**: Annotations are currently logged to console only
-3. **Point Deletion**: Cannot delete individual points (must clear entire annotation)
-4. **Authentication**: Uses hardcoded credentials (demo purpose only)
+| Limitation | Description | Status |
+|------------|-------------|--------|
+| **Upload Limit** | Maximum 2 images per session | Configurable |
+| **Point Deletion** | Cannot delete individual points | Planned |
+| **Console Save** | Individual saves log to console only | By design |
+| **Demo Auth** | Hardcoded credentials (admin/123456) | Demo only |
+| **No Undo** | Cannot revert annotation changes | Planned |
+| **Session Only** | No persistent storage across sessions | Future |
+
+## 🔒 Security Considerations
+
+> ⚠️ **Important:** This is a demonstration application with basic security.
+
+For production deployment:
+
+1. **Authentication:**
+   - Implement proper JWT-based authentication
+   - Use secure password hashing (bcrypt, argon2)
+   - Add rate limiting and CAPTCHA
+
+2. **File Upload:**
+   - Server-side validation of file types
+   - Virus scanning for uploaded files
+   - Content Security Policy (CSP) headers
+
+3. **Data Storage:**
+   - Encrypt sensitive data at rest
+   - Use secure HTTPS connections
+   - Implement proper CORS policies
+
+4. **Input Validation:**
+   - Sanitize all user inputs
+   - Validate annotation coordinates
+   - Prevent XSS attacks
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please follow these steps:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. **Fork the repository**
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. **Commit your changes:**
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. **Push to the branch:**
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. **Open a Pull Request**
+
+### Development Guidelines
+
+- Follow TypeScript strict mode
+- Use ESLint and fix all warnings
+- Write meaningful commit messages
+- Update documentation for new features
+- Test across different browsers
 
 ## 📄 License
 
@@ -306,16 +566,40 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [React](https://react.dev/) - The library for web and native user interfaces
-- [Vite](https://vitejs.dev/) - Next generation frontend tooling
-- [Ant Design](https://ant.design/) - A design system for enterprise-level products
-- [Konva](https://konvajs.org/) - 2D canvas library for desktop and mobile applications
-- [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
+- **[React](https://react.dev/)** - The library for web and native user interfaces
+- **[Vite](https://vitejs.dev/)** - Next generation frontend tooling
+- **[Ant Design](https://ant.design/)** - Enterprise-class UI design system
+- **[Konva](https://konvajs.org/)** - 2D canvas library for annotations
+- **[TypeScript](https://www.typescriptlang.org/)** - JavaScript with syntax for types
+- **[exifr](https://github.com/MikeKovarik/exifr)** - Fast and versatile EXIF reader
+- **[Sass](https://sass-lang.com/)** - Professional grade CSS extension
 
-## 📧 Contact
+## 📧 Support
 
-For questions or support, please open an issue on GitHub.
+For questions, issues, or feature requests:
+
+- **Issues:** Open an issue on GitHub
+- **Discussions:** Use GitHub Discussions for questions
+- **Email:** Contact the maintainers
+
+## 🎯 Project Status
+
+**Current Version:** 1.0.0  
+**Status:** Production Ready  
+**Last Updated:** November 2025
+
+### Recent Updates
+
+- ✅ Full English interface
+- ✅ SCSS styling implementation
+- ✅ Advanced image validation with exifr
+- ✅ Individual image download with annotation overlay
+- ✅ Optimized control point size (5px) for precision
+- ✅ Icon-based UI improvements
+- ✅ Component-based architecture
 
 ---
 
-**Made with ❤️ using React + TypeScript + Vite**
+**Made with ❤️ using React + TypeScript + Vite + Sass**
+
+*Happy Annotating! 🎨*
